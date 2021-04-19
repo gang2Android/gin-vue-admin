@@ -2,17 +2,28 @@
   <div>
     <div class="search-term">
       <el-form :inline="true" :model="searchInfo" class="demo-form-inline">
-        <el-form-item label="姓名">
+        <el-form-item label="级别名称">
           <el-input placeholder="搜索条件" v-model="searchInfo.name"></el-input>
         </el-form-item>    
-        <el-form-item label="年龄">
-          <el-input placeholder="搜索条件" v-model="searchInfo.age"></el-input>
-        </el-form-item>    
+            <el-form-item label="是否打开" prop="is_open">
+            <el-select v-model="searchInfo.is_open" clear placeholder="请选择">
+                <el-option
+                    key="true"
+                    label="是"
+                    value="true">
+                </el-option>
+                <el-option
+                    key="false"
+                    label="否"
+                    value="false">
+                </el-option>
+            </el-select>
+            </el-form-item>   
         <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item>
         <el-form-item>
-          <el-button @click="openDialog" type="primary">新增学生</el-button>
+          <el-button @click="openDialog" type="primary">新增会员等级</el-button>
         </el-form-item>
         <el-form-item>
           <el-popover placement="top" v-model="deleteVisible" width="160">
@@ -40,13 +51,15 @@
          <template slot-scope="scope">{{scope.row.CreatedAt|formatDate}}</template>
     </el-table-column>
     
-    <el-table-column label="姓名" prop="name" width="120"></el-table-column> 
+    <el-table-column label="级别名称" prop="name" width="120"></el-table-column> 
     
-    <el-table-column label="年龄" prop="age" width="120"></el-table-column> 
+    <el-table-column label="是否打开" prop="is_open" width="120">
+         <template slot-scope="scope">{{scope.row.is_open|formatBoolean}}</template>
+    </el-table-column>
     
       <el-table-column label="按钮组">
         <template slot-scope="scope">
-          <el-button class="table-button" @click="updateStudent(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
+          <el-button class="table-button" @click="updateMemberLevel(scope.row)" size="small" type="primary" icon="el-icon-edit">变更</el-button>
           <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteRow(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -65,11 +78,12 @@
 
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
       <el-form :model="formData" label-position="right" label-width="80px">
-         <el-form-item label="姓名:">
+         <el-form-item label="级别名称:">
             <el-input v-model="formData.name" clearable placeholder="请输入" ></el-input>
       </el-form-item>
        
-         <el-form-item label="年龄:"><el-input v-model.number="formData.age" clearable placeholder="请输入"></el-input>
+         <el-form-item label="是否打开:">
+            <el-switch active-color="#13ce66" inactive-color="#ff4949" active-text="是" inactive-text="否" v-model="formData.is_open" clearable ></el-switch>
       </el-form-item>
        </el-form>
       <div class="dialog-footer" slot="footer">
@@ -82,27 +96,27 @@
 
 <script>
 import {
-    createStudent,
-    deleteStudent,
-    deleteStudentByIds,
-    updateStudent,
-    findStudent,
-    getStudentList
-} from "@/api/student";  //  此处请自行替换地址
+    createMemberLevel,
+    deleteMemberLevel,
+    deleteMemberLevelByIds,
+    updateMemberLevel,
+    findMemberLevel,
+    getMemberLevelList
+} from "@/api/memberLevel";  //  此处请自行替换地址
 import { formatTimeToStr } from "@/utils/date";
 import infoList from "@/mixins/infoList";
 export default {
-  name: "Student",
+  name: "MemberLevel",
   mixins: [infoList],
   data() {
     return {
-      listApi: getStudentList,
+      listApi: getMemberLevelList,
       dialogFormVisible: false,
       type: "",
       deleteVisible: false,
       multipleSelection: [],formData: {
             name:"",
-            age:0,
+            is_open:false,
             
       }
     };
@@ -128,7 +142,10 @@ export default {
       //条件搜索前端看此方法
       onSubmit() {
         this.page = 1
-        this.pageSize = 10      
+        this.pageSize = 10       
+        if (this.searchInfo.is_open==""){
+          this.searchInfo.is_open=null
+        }      
         this.getTableData()
       },
       handleSelectionChange(val) {
@@ -140,7 +157,7 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-           this.deleteStudent(row);
+           this.deleteMemberLevel(row);
         });
       },
       async onDelete() {
@@ -156,7 +173,7 @@ export default {
           this.multipleSelection.map(item => {
             ids.push(item.ID)
           })
-        const res = await deleteStudentByIds({ ids })
+        const res = await deleteMemberLevelByIds({ ids })
         if (res.code == 0) {
           this.$message({
             type: 'success',
@@ -169,11 +186,11 @@ export default {
           this.getTableData()
         }
       },
-    async updateStudent(row) {
-      const res = await findStudent({ ID: row.ID });
+    async updateMemberLevel(row) {
+      const res = await findMemberLevel({ ID: row.ID });
       this.type = "update";
       if (res.code == 0) {
-        this.formData = res.data.restudent;
+        this.formData = res.data.rememberLevel;
         this.dialogFormVisible = true;
       }
     },
@@ -181,12 +198,12 @@ export default {
       this.dialogFormVisible = false;
       this.formData = {
           name:"",
-          age:0,
+          is_open:false,
           
       };
     },
-    async deleteStudent(row) {
-      const res = await deleteStudent({ ID: row.ID });
+    async deleteMemberLevel(row) {
+      const res = await deleteMemberLevel({ ID: row.ID });
       if (res.code == 0) {
         this.$message({
           type: "success",
@@ -202,13 +219,13 @@ export default {
       let res;
       switch (this.type) {
         case "create":
-          res = await createStudent(this.formData);
+          res = await createMemberLevel(this.formData);
           break;
         case "update":
-          res = await updateStudent(this.formData);
+          res = await updateMemberLevel(this.formData);
           break;
         default:
-          res = await createStudent(this.formData);
+          res = await createMemberLevel(this.formData);
           break;
       }
       if (res.code == 0) {

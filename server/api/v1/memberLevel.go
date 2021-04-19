@@ -10,18 +10,18 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Tags Student
-// @Summary 创建Student
+// @Tags MemberLevel
+// @Summary 创建MemberLevel
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.Student true "创建Student"
+// @Param data body model.MemberLevel true "创建MemberLevel"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /student/createStudent [post]
-func CreateStudent(c *gin.Context) {
-	var student model.Student
-	_ = c.ShouldBindJSON(&student)
-	if err := service.CreateStudent(student); err != nil {
+// @Router /memberLevel/createMemberLevel [post]
+func CreateMemberLevel(c *gin.Context) {
+	var memberLevel model.MemberLevel
+	_ = c.ShouldBindJSON(&memberLevel)
+	if err := service.CreateMemberLevel(memberLevel); err != nil {
 		global.GVA_LOG.Error("创建失败!", zap.Any("err", err))
 		response.FailWithMessage("创建失败", c)
 	} else {
@@ -29,18 +29,18 @@ func CreateStudent(c *gin.Context) {
 	}
 }
 
-// @Tags Student
-// @Summary 删除Student
+// @Tags MemberLevel
+// @Summary 删除MemberLevel
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.Student true "删除Student"
+// @Param data body model.MemberLevel true "删除MemberLevel"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"删除成功"}"
-// @Router /student/deleteStudent [delete]
-func DeleteStudent(c *gin.Context) {
-	var student model.Student
-	_ = c.ShouldBindJSON(&student)
-	if err := service.DeleteStudent(student); err != nil {
+// @Router /memberLevel/deleteMemberLevel [delete]
+func DeleteMemberLevel(c *gin.Context) {
+	var memberLevel model.MemberLevel
+	_ = c.ShouldBindJSON(&memberLevel)
+	if err := service.DeleteMemberLevel(memberLevel); err != nil {
 		global.GVA_LOG.Error("删除失败!", zap.Any("err", err))
 		response.FailWithMessage("删除失败", c)
 	} else {
@@ -48,18 +48,18 @@ func DeleteStudent(c *gin.Context) {
 	}
 }
 
-// @Tags Student
-// @Summary 批量删除Student
+// @Tags MemberLevel
+// @Summary 批量删除MemberLevel
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body request.IdsReq true "批量删除Student"
+// @Param data body request.IdsReq true "批量删除MemberLevel"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"批量删除成功"}"
-// @Router /student/deleteStudentByIds [delete]
-func DeleteStudentByIds(c *gin.Context) {
+// @Router /memberLevel/deleteMemberLevelByIds [delete]
+func DeleteMemberLevelByIds(c *gin.Context) {
 	var IDS request.IdsReq
 	_ = c.ShouldBindJSON(&IDS)
-	if err := service.DeleteStudentByIds(IDS); err != nil {
+	if err := service.DeleteMemberLevelByIds(IDS); err != nil {
 		global.GVA_LOG.Error("批量删除失败!", zap.Any("err", err))
 		response.FailWithMessage("批量删除失败", c)
 	} else {
@@ -67,18 +67,18 @@ func DeleteStudentByIds(c *gin.Context) {
 	}
 }
 
-// @Tags Student
-// @Summary 更新Student
+// @Tags MemberLevel
+// @Summary 更新MemberLevel
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.Student true "更新Student"
+// @Param data body model.MemberLevel true "更新MemberLevel"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"更新成功"}"
-// @Router /student/updateStudent [put]
-func UpdateStudent(c *gin.Context) {
-	var student model.Student
-	_ = c.ShouldBindJSON(&student)
-	if err := service.UpdateStudent(student); err != nil {
+// @Router /memberLevel/updateMemberLevel [put]
+func UpdateMemberLevel(c *gin.Context) {
+	var memberLevel model.MemberLevel
+	_ = c.ShouldBindJSON(&memberLevel)
+	if err := service.UpdateMemberLevel(memberLevel); err != nil {
 		global.GVA_LOG.Error("更新失败!", zap.Any("err", err))
 		response.FailWithMessage("更新失败", c)
 	} else {
@@ -86,37 +86,37 @@ func UpdateStudent(c *gin.Context) {
 	}
 }
 
-// @Tags Student
-// @Summary 用id查询Student
+// @Tags MemberLevel
+// @Summary 用id查询MemberLevel
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body model.Student true "用id查询Student"
+// @Param data body model.MemberLevel true "用id查询MemberLevel"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"查询成功"}"
-// @Router /student/findStudent [get]
-func FindStudent(c *gin.Context) {
-	var student model.Student
-	_ = c.ShouldBindQuery(&student)
-	if err, restudent := service.GetStudent(student.ID); err != nil {
+// @Router /memberLevel/findMemberLevel [get]
+func FindMemberLevel(c *gin.Context) {
+	var memberLevel model.MemberLevel
+	_ = c.ShouldBindQuery(&memberLevel)
+	if err, rememberLevel := service.GetMemberLevel(memberLevel.ID); err != nil {
 		global.GVA_LOG.Error("查询失败!", zap.Any("err", err))
 		response.FailWithMessage("查询失败", c)
 	} else {
-		response.OkWithData(gin.H{"restudent": restudent}, c)
+		response.OkWithData(gin.H{"rememberLevel": rememberLevel}, c)
 	}
 }
 
-// @Tags Student
-// @Summary 分页获取Student列表
+// @Tags MemberLevel
+// @Summary 分页获取MemberLevel列表
 // @Security ApiKeyAuth
 // @accept application/json
 // @Produce application/json
-// @Param data body request.StudentSearch true "分页获取Student列表"
+// @Param data body request.MemberLevelSearch true "分页获取MemberLevel列表"
 // @Success 200 {string} string "{"success":true,"data":{},"msg":"获取成功"}"
-// @Router /student/getStudentList [get]
-func GetStudentList(c *gin.Context) {
-	var pageInfo request.StudentSearch
+// @Router /memberLevel/getMemberLevelList [get]
+func GetMemberLevelList(c *gin.Context) {
+	var pageInfo request.MemberLevelSearch
 	_ = c.ShouldBindQuery(&pageInfo)
-	if err, list, total := service.GetStudentInfoList(pageInfo); err != nil {
+	if err, list, total := service.GetMemberLevelInfoList(pageInfo); err != nil {
 		global.GVA_LOG.Error("获取失败", zap.Any("err", err))
 		response.FailWithMessage("获取失败", c)
 	} else {
