@@ -83,6 +83,9 @@ func GetMemberInfoList(info request.MemberSearch) (err error, list interface{}, 
 	if info.Status != 0 {
 		db = db.Where("`status` = ?", info.Status)
 	}
+	if info.LevelId != 0 {
+		db = db.Where("`level_id` = ?", info.LevelId)
+	}
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&members).Error
 	return err, members, total

@@ -9,10 +9,16 @@
           <el-input placeholder="搜索条件" v-model="searchInfo.mobile"></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-input placeholder="搜索条件" v-model="searchInfo.status"></el-input>
+          <el-select v-model="searchInfo.status" placeholder="请选择" clearable>
+            <el-option v-for="(item, index) in statusOptions" :key="index" :label="item.label"
+                       :value="item.value" :disabled="item.disabled"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="级别">
-          <el-input placeholder="级别" v-model="searchInfo.level_id"></el-input>
+          <el-select v-model="searchInfo.level_id" placeholder="请选择" clearable>
+            <el-option v-for="(item, index) in mLevelOptions" :key="index" :label="item.label"
+                       :value="item.value" :disabled="item.disabled"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="推荐人id">
           <el-input placeholder="推荐人id" v-model="searchInfo.pid"></el-input>
@@ -42,7 +48,7 @@
 
       <el-table-column label="Id" prop="ID" width="40" align="center"></el-table-column>
 
-      <el-table-column label="日期" width="180">
+      <el-table-column label="注册时间" width="180">
         <template slot-scope="scope">{{ scope.row.CreatedAt|formatDate }}</template>
       </el-table-column>
 
@@ -50,13 +56,13 @@
 
       <el-table-column label="手机号" prop="mobile" width="120"></el-table-column>
 
-      <el-table-column label="状态" prop="status" width="50" align="center"></el-table-column>
+      <el-table-column label="状态" prop="status" width="50" align="center" :formatter="formatStatus"></el-table-column>
 
-      <el-table-column label="级别" prop="level_id" width="50" align="center"></el-table-column>
+      <el-table-column label="级别" prop="level_id" width="50" align="center" :formatter="formatLevel"></el-table-column>
 
       <el-table-column label="推荐人Id" prop="pid" width="90" align="center"></el-table-column>
 
-      <el-table-column label="按钮组">
+      <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button class="table-button" @click="updateMember(scope.row)" size="small" type="primary"
                      icon="el-icon-edit">变更
@@ -71,7 +77,7 @@
                    :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"
                    layout="total, sizes, prev, pager, next, jumper"></el-pagination>
 
-    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="弹窗操作">
+    <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="">
       <el-form ref="elForm" :model="formData" :rules="rules" label-position="right" label-width="80px">
         <el-form-item label="姓名:" prop="name">
           <el-input v-model="formData.name" placeholder="请输入" :maxlength="10" clearable prefix-icon='el-icon-user'
@@ -89,7 +95,10 @@
           </el-select>
         </el-form-item>
         <el-form-item label="级别:">
-          <el-input v-model.number="formData.level_id" clearable placeholder="请输入"></el-input>
+          <el-select v-model="formData.level_id" placeholder="请选择" clearable>
+            <el-option v-for="(item, index) in mLevelOptions" :key="index" :label="item.label"
+                       :value="item.value" :disabled="item.disabled"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="推荐人Id:">
           <el-input v-model.number="formData.pid" clearable placeholder="请输入"></el-input>
@@ -130,7 +139,7 @@ export default {
       formData: {
         name: "",
         mobile: "",
-        status: 0,
+        status: 1,
         level_id: 1,
         pid: 0,
       },
@@ -151,24 +160,18 @@ export default {
         }],
       },
       statusOptions: [],
+      mLevelOptions: [],
     };
   },
   filters: {
     formatDate: function (time) {
       if (time != null && time != "") {
-        var date = new Date(time);
+        const date = new Date(time);
         return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
       } else {
         return "";
       }
     },
-    formatBoolean: function (bool) {
-      if (bool != null) {
-        return bool ? "是" : "否";
-      } else {
-        return "";
-      }
-    }
   },
   methods: {
     //条件搜索前端看此方法
@@ -232,8 +235,8 @@ export default {
       this.formData = {
         name: "",
         mobile: "",
-        status: 0,
-
+        status: 1,
+        level_id: 1,
       };
     },
     async deleteMember(row) {
@@ -279,18 +282,40 @@ export default {
             message: "创建/更改成功"
           })
           that.closeDialog();
-          that.getTableData();
+          await that.getTableData();
         }
       })
     },
     openDialog() {
       this.type = "create";
       this.dialogFormVisible = true;
-    }
+    },
+    formatStatus(row) {
+      let name = "";
+      this.statusOptions.some(function (item) {
+        if (row.status === item.value) {
+          name = item.label;
+          return true;
+        }
+      });
+      return name;
+    },
+    formatLevel(row) {
+      let name = "";
+      this.mLevelOptions.some(function (item) {
+        if (row.level_id === item.value) {
+          name = item.label;
+          return true;
+        }
+      });
+      return name;
+    },
   },
   async created() {
     await this.getTableData();
     this.statusOptions = await this.getDict('memberStatus')
+    this.mLevelOptions = await this.getDict('memberLevel')
+    console.log(this.mLevelOptions)
   }
 };
 </script>

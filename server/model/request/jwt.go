@@ -15,3 +15,11 @@ type CustomClaims struct {
 	BufferTime  int64
 	jwt.StandardClaims
 }
+
+type CustomAppClaims struct {
+	ID         uint
+	Username   string
+	Mobile     string
+	BufferTime int64
+	jwt.StandardClaims
+}
