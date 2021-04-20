@@ -9,7 +9,7 @@ import (
 func Login(u *model.Member) (err error, userInter *model.Member) {
 	var user model.Member
 	u.PwdLogin = utils.MD5V([]byte(u.PwdLogin))
-	err = global.GVA_DB.Where("name = ? AND pwd_login = ?", u.Name, u.PwdLogin).First(&user).Error
+	err = global.GVA_DB.Where("mobile = ? AND pwd_login = ?", u.Name, u.PwdLogin).First(&user).Error
 	return err, &user
 }
 

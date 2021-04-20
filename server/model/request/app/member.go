@@ -2,6 +2,6 @@ package app
 
 // User login structure
 type Login struct {
-	Username string `json:"username"`
+	Mobile   string `json:"mobile"`
 	Password string `json:"password"`
 }

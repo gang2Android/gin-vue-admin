@@ -20,7 +20,7 @@ import (
 func Login(c *gin.Context) {
 	var loginParams = app.Login{}
 	_ = c.ShouldBindJSON(&loginParams)
-	member := &model.Member{Name: loginParams.Username, PwdLogin: loginParams.Password}
+	member := &model.Member{Name: loginParams.Mobile, PwdLogin: loginParams.Password}
 	if err, user := serviceApp.Login(member); err != nil {
 		global.GVA_LOG.Error("登陆失败! 用户名不存在或者密码错误", zap.Any("err", err))
 		response.FailWithMessage("用户名不存在或者密码错误", c)
