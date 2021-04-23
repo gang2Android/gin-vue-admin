@@ -293,7 +293,7 @@ export default {
       }
     },
     async enterDialog() {
-      var that = this
+      const that = this;
       this.$refs['elForm'].validate().then(res => {
         if (!res) return false
         return true
