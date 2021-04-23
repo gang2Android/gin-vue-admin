@@ -10,7 +10,7 @@ import (
 	"go.uber.org/zap"
 )
 
-// @Tags Member
+// CreateMember @Tags Member
 // @Summary 创建Member
 // @Security ApiKeyAuth
 // @accept application/json
@@ -29,7 +29,7 @@ func CreateMember(c *gin.Context) {
 	}
 }
 
-// @Tags Member
+// DeleteMember @Tags Member
 // @Summary 删除Member
 // @Security ApiKeyAuth
 // @accept application/json
@@ -48,7 +48,7 @@ func DeleteMember(c *gin.Context) {
 	}
 }
 
-// @Tags Member
+// DeleteMemberByIds @Tags Member
 // @Summary 批量删除Member
 // @Security ApiKeyAuth
 // @accept application/json
@@ -67,7 +67,7 @@ func DeleteMemberByIds(c *gin.Context) {
 	}
 }
 
-// @Tags Member
+// UpdateMember @Tags Member
 // @Summary 更新Member
 // @Security ApiKeyAuth
 // @accept application/json
@@ -86,7 +86,7 @@ func UpdateMember(c *gin.Context) {
 	}
 }
 
-// @Tags Member
+// FindMember @Tags Member ...
 // @Summary 用id查询Member
 // @Security ApiKeyAuth
 // @accept application/json
@@ -105,7 +105,7 @@ func FindMember(c *gin.Context) {
 	}
 }
 
-// @Tags Member
+// GetMemberList @Tags Member
 // @Summary 分页获取Member列表
 // @Security ApiKeyAuth
 // @accept application/json
