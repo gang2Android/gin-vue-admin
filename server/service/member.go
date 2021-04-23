@@ -4,6 +4,7 @@ import (
 	"gin-vue-admin/global"
 	"gin-vue-admin/model"
 	"gin-vue-admin/model/request"
+	"gin-vue-admin/utils"
 )
 
 //@author: [piexlmax](https://github.com/piexlmax)
@@ -13,6 +14,12 @@ import (
 //@return: err error
 
 func CreateMember(member model.Member) (err error) {
+	if member.PwdLogin != "" {
+		member.PwdLogin = utils.MD5V([]byte("123456"))
+	}
+	if member.PwdPay != "" {
+		member.PwdPay = utils.MD5V([]byte("123456"))
+	}
 	err = global.GVA_DB.Create(&member).Error
 	return err
 }
@@ -39,23 +46,27 @@ func DeleteMemberByIds(ids request.IdsReq) (err error) {
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
+// UpdateMember @author: [piexlmax](https://github.com/piexlmax)
 //@function: UpdateMember
 //@description: 更新Member记录
 //@param: member *model.Member
 //@return: err error
-
 func UpdateMember(member model.Member) (err error) {
+	if member.PwdLogin != "" {
+		member.PwdLogin = utils.MD5V([]byte(member.PwdLogin))
+	}
+	if member.PwdPay != "" {
+		member.PwdPay = utils.MD5V([]byte(member.PwdPay))
+	}
 	err = global.GVA_DB.Save(&member).Error
 	return err
 }
 
-//@author: [piexlmax](https://github.com/piexlmax)
+// GetMember @author: [piexlmax](https://github.com/piexlmax)
 //@function: GetMember
 //@description: 根据id获取Member记录
 //@param: id uint
 //@return: err error, member model.Member
-
 func GetMember(id uint) (err error, member model.Member) {
 	err = global.GVA_DB.Where("id = ?", id).First(&member).Error
 	return

@@ -52,17 +52,31 @@
         <template slot-scope="scope">{{ scope.row.CreatedAt|formatDate }}</template>
       </el-table-column>
 
-      <el-table-column label="姓名" prop="name" width="120"></el-table-column>
+      <el-table-column label="头像" width="70" prop="img">
+        <template slot-scope="scope">
+          <el-image
+              style="width: 40px; height: 40px"
+              :src="scope.row.img"
+              :preview-src-list="[scope.row.img]">
+            <div slot="error" class="image-slot">
+              <el-avatar size="medium" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png"
+                         style="width: 40px; height: 40px"/>
+            </div>
+          </el-image>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="姓名" width="120" prop="name"></el-table-column>
 
       <el-table-column label="手机号" prop="mobile" width="120"></el-table-column>
 
-      <el-table-column label="状态" prop="status" width="50" align="center" :formatter="formatStatus"></el-table-column>
+      <el-table-column label="状态" prop="status" width="70" align="center" :formatter="formatStatus"></el-table-column>
 
-      <el-table-column label="级别" prop="level_id" width="50" align="center" :formatter="formatLevel"></el-table-column>
+      <el-table-column label="级别" prop="level_id" width="70" align="center" :formatter="formatLevel"></el-table-column>
 
       <el-table-column label="推荐人Id" prop="pid" width="90" align="center"></el-table-column>
 
-      <el-table-column label="操作">
+      <el-table-column label="操作" fixed="right">
         <template slot-scope="scope">
           <el-button class="table-button" @click="updateMember(scope.row)" size="small" type="primary"
                      icon="el-icon-edit">变更
@@ -78,15 +92,14 @@
                    layout="total, sizes, prev, pager, next, jumper"></el-pagination>
 
     <el-dialog :before-close="closeDialog" :visible.sync="dialogFormVisible" title="">
-      <el-form ref="elForm" :model="formData" :rules="rules" label-position="right" label-width="80px">
-        <el-form-item label="姓名:" prop="name">
+      <el-form ref="elForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+        <el-form-item label="姓名" prop="name">
           <el-input v-model="formData.name" placeholder="请输入" :maxlength="10" clearable prefix-icon='el-icon-user'
                     :style="{width: '100%'}"></el-input>
         </el-form-item>
-        <el-form-item label="手机号:" prop="mobile">
+        <el-form-item label="手机号" prop="mobile">
           <el-input v-model="formData.mobile" placeholder="请输入手机号" :maxlength="11" show-word-limit clearable
-                    prefix-icon='el-icon-mobile'
-                    :style="{width: '100%'}"></el-input>
+                    prefix-icon='el-icon-mobile' :style="{width: '100%'}"></el-input>
         </el-form-item>
         <el-form-item label="状态" prop="status">
           <el-select v-model="formData.status" placeholder="请选择" clearable :style="{width: '100%'}">
@@ -94,14 +107,22 @@
                        :value="item.value" :disabled="item.disabled"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="级别:">
+        <el-form-item label="级别">
           <el-select v-model="formData.level_id" placeholder="请选择" clearable>
-            <el-option v-for="(item, index) in mLevelOptions" :key="index" :label="item.label"
-                       :value="item.value" :disabled="item.disabled"></el-option>
+            <el-option v-for="(item, index) in mLevelOptions" :key="index" :label="item.label" :value="item.value"
+                       :disabled="item.disabled"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="推荐人Id:">
+        <el-form-item label="推荐人Id">
           <el-input v-model.number="formData.pid" clearable placeholder="请输入"></el-input>
+        </el-form-item>
+        <el-form-item label="登录密码" prop="pwd_login">
+          <el-input v-model="formData.pwd_login" placeholder="请输入登录密码" clearable show-password
+                    :style="{width: '100%'}"></el-input>
+        </el-form-item>
+        <el-form-item label="支付密码" prop="pwd_pay">
+          <el-input v-model="formData.pwd_pay" placeholder="请输入支付密码" clearable show-password
+                    :style="{width: '100%'}"></el-input>
         </el-form-item>
       </el-form>
       <div class="dialog-footer" slot="footer">
@@ -138,10 +159,13 @@ export default {
       multipleSelection: [],
       formData: {
         name: "",
+        img: "https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png",
         mobile: "",
         status: 1,
         level_id: 1,
         pid: 0,
+        pwd_login: "",
+        pwd_pay: "",
       },
       rules: {
         name: [{
@@ -156,6 +180,16 @@ export default {
         }, {
           pattern: /^1(3|4|5|7|8|9)\d{9}$/,
           message: '手机号格式错误',
+          trigger: 'blur'
+        }],
+        pwd_login: [{
+          required: false,
+          message: '请输入登录密码',
+          trigger: 'blur'
+        }],
+        pwd_pay: [{
+          required: false,
+          message: '请输入支付密码',
           trigger: 'blur'
         }],
       },
@@ -227,6 +261,8 @@ export default {
       this.type = "update";
       if (res.code == 0) {
         this.formData = res.data.remember;
+        this.formData.pwd_login = ""
+        this.formData.pwd_pay = ""
         this.dialogFormVisible = true;
       }
     },
@@ -237,6 +273,8 @@ export default {
         mobile: "",
         status: 1,
         level_id: 1,
+        pwd_login: "",
+        pwd_pay: "",
       };
     },
     async deleteMember(row) {
