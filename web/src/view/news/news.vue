@@ -107,7 +107,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="图片/视频" width="100">
+      <el-table-column label="图片" width="100">
         <template slot-scope="scope">
           <el-image
               style="width: 80px; height: auto;"
@@ -118,6 +118,14 @@
                          style="width: 40px; height: 40px"/>
             </div>
           </el-image>
+        </template>
+      </el-table-column>
+
+      <el-table-column label="视频" prop="comment_count" width="90" align="center">
+        <template slot-scope="scope">
+          <el-button class="table-button" @click="openVideo(scope.row.video_url)" size="small"
+                     icon="el-icon-video-play">查看
+          </el-button>
         </template>
       </el-table-column>
 
@@ -218,6 +226,16 @@
         <el-button @click="enterDialog" type="primary">确 定</el-button>
       </div>
     </el-dialog>
+    <el-dialog :before-close="closeVideoDialog" :visible.sync="dialogVideo" title="操作">
+      <video-player class="video-player vjs-custom-skin"
+                    ref="videoPlayer"
+                    :playsinline="true"
+                    :options="playerOptions"
+      ></video-player>
+      <div class="dialog-footer" slot="footer">
+        <el-button @click="closeVideoDialog">关 闭</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -232,14 +250,20 @@ import {
 } from "@/api/news";  //  此处请自行替换地址
 import {formatTimeToStr} from "@/utils/date";
 import infoList from "@/mixins/infoList";
+import {videoPlayer} from 'vue-video-player'
+import 'video.js/dist/video-js.css'
 
 export default {
+  components: {
+    videoPlayer
+  },
   name: "News",
   mixins: [infoList],
   data() {
     return {
       listApi: getNewsList,
       dialogFormVisible: false,
+      dialogVideo: false,
       type: "",
       deleteVisible: false,
       multipleSelection: [], formData: {
@@ -256,13 +280,35 @@ export default {
         comment_count: 0,
         like_count: 0,
         collect_count: 0,
+      },
+      playerOptions: {
+        playbackRates: [0.7, 1.0, 1.5, 2.0],
+        autoplay: false,
+        muted: false,
+        loop: false,
+        preload: 'auto',
+        language: 'zh-CN',
+        aspectRatio: '16:9',
+        fluid: true,
+        sources: [{
+          src: "",
+          type: 'video/mp4'
+        }],
+        poster: "../../static/images/test.jpg",
+        notSupportedMessage: '此视频暂无法播放，请稍后再试',
+        controlBar: {
+          timeDivider: true,
+          durationDisplay: true,
+          remainingTimeDisplay: false,
+          fullscreenToggle: true  //全屏按钮
+        }
       }
     };
   },
   filters: {
     formatDate: function (time) {
       if (time != null && time != "") {
-        var date = new Date(time);
+        const date = new Date(time);
         return formatTimeToStr(date, "yyyy-MM-dd hh:mm:ss");
       } else {
         return "";
@@ -318,7 +364,7 @@ export default {
           this.page--;
         }
         this.deleteVisible = false
-        this.getTableData()
+        await this.getTableData()
       }
     },
     async updateNews(row) {
@@ -328,6 +374,10 @@ export default {
         this.formData = res.data.renews;
         this.dialogFormVisible = true;
       }
+    },
+    async openVideo(url) {
+      this.playerOptions.sources[0].src = url
+      this.dialogVideo = true;
     },
     closeDialog() {
       this.dialogFormVisible = false;
@@ -348,6 +398,10 @@ export default {
 
       };
     },
+    closeVideoDialog() {
+      this.$refs.videoPlayer.player.pause();
+      this.dialogVideo = false;
+    },
     async deleteNews(row) {
       const res = await deleteNews({ID: row.ID});
       if (res.code == 0) {
@@ -358,7 +412,7 @@ export default {
         if (this.tableData.length == 1) {
           this.page--;
         }
-        this.getTableData();
+        await this.getTableData();
       }
     },
     async enterDialog() {
@@ -380,7 +434,7 @@ export default {
           message: "创建/更改成功"
         })
         this.closeDialog();
-        this.getTableData();
+        await this.getTableData();
       }
     },
     openDialog() {
