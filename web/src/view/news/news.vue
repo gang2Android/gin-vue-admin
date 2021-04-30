@@ -302,7 +302,14 @@ export default {
           remainingTimeDisplay: false,
           fullscreenToggle: true  //全屏按钮
         }
-      }
+      },
+      rules: {
+        name: [{
+          required: true,
+          message: '请输入姓名',
+          trigger: 'blur'
+        }],
+      },
     };
   },
   filters: {
@@ -376,6 +383,13 @@ export default {
       }
     },
     async openVideo(url) {
+      if (url === ""){
+        this.$message({
+          type: 'success',
+          message: '没有视频'
+        })
+        return
+      }
       this.playerOptions.sources[0].src = url
       this.dialogVideo = true;
     },
