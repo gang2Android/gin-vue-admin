@@ -11,7 +11,7 @@ aliyunoss:
   bucket-name: yourBucketName
   bucket-url: yourBucketUrl
 autocode:
-  root: /Users/hujiangang/go_work/gin-vue-admin
+  root: E:\work_go1\gin-vue-admin
   server: /server
   server-api: /api/v1
   server-initialize: /initialize
@@ -47,15 +47,15 @@ jwt:
 local:
   path: uploads/file
 mysql:
-  path: 127.0.0.1:3000
+  path: 127.0.0.1:3306
   config: charset=utf8mb4&parseTime=True&loc=Local
   db-name: gva_test
-  username: gva_test
-  password: PANnWxATrJGaECRi
+  username: root
+  password: root
   max-idle-conns: 0
   max-open-conns: 0
   log-mode: false
-  log-zap: "info"
+  log-zap: ""
 qiniu:
   zone: ZoneHuadong
   bucket: qm-plus-img
@@ -94,7 +94,7 @@ zap:
   prefix: '[GIN-VUE-ADMIN]'
   director: log
   link-name: latest_log
-  showLine: true
+  showLine: false
   encode-level: LowercaseColorLevelEncoder
   stacktrace-key: stacktrace
   log-in-console: true

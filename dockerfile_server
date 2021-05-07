@@ -5,13 +5,6 @@ ENV GOPROXY=https://goproxy.io,direct
 WORKDIR /go/src/gin-vue-admin
 COPY server/ ./
 
-RUN cat ./config.yaml
-COPY .docker-compose/shell/server-handle.sh .
-RUN ls -al
-RUN sh ./server-handle.sh
-RUN rm -f server-handle.sh
-RUN cat ./config.yaml
-
 RUN go env && go mod tidy && go build -o server .
 
 FROM alpine:latest

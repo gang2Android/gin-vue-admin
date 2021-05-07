@@ -98,6 +98,9 @@ func GetNewsInfoList(info request.NewsSearch) (err error, list interface{}, tota
 	if info.Collect_count != 0 {
 		db = db.Where("`collect_count` > ?", info.Collect_count)
 	}
+	if info.Status != 0 {
+		db = db.Where("`status` = ?", info.Status)
+	}
 	err = db.Count(&total).Error
 	err = db.Limit(limit).Offset(offset).Find(&newss).Error
 	return err, newss, total

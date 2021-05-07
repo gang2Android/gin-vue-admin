@@ -21,6 +21,7 @@ type News struct {
 	Comment_count int    `json:"comment_count" form:"comment_count" gorm:"column:comment_count;comment:评论数;type:int;size:100;"`
 	Like_count    int    `json:"like_count" form:"like_count" gorm:"column:like_count;comment:点赞数;type:int;size:100;"`
 	Collect_count int    `json:"collect_count" form:"collect_count" gorm:"column:collect_count;comment:收藏数;type:int;size:100;"`
+	Status        int    `json:"status" form:"status" gorm:"column:status;comment:状态;type:int;size:10;"`
 }
 
 func (News) TableName() string {
