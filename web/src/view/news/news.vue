@@ -26,6 +26,12 @@
         <el-form-item label="收藏数">
           <el-input placeholder="搜索条件" v-model="searchInfo.collect_count" style="width: 100px;"></el-input>
         </el-form-item>
+        <el-form-item label="状态">
+          <el-select v-model="searchInfo.status" placeholder="请选择" clearable>
+            <el-option v-for="(item, index) in statusOptions" :key="index" :label="item.label"
+                       :value="item.value" :disabled="item.disabled"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item>
           <el-button @click="onSubmit" type="primary">查询</el-button>
         </el-form-item>
@@ -135,6 +141,8 @@
 
       <el-table-column label="收藏数" prop="collect_count" width="70" align="center"></el-table-column>
 
+      <el-table-column label="状态" prop="status" width="70" align="center" :formatter="formatStatus"></el-table-column>
+
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button class="table-button" @click="updateNews(scope.row)" size="small" type="primary"
@@ -160,6 +168,13 @@
       <el-form ref="elForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
         <el-form-item label="会员id:">
           <el-input v-model.number="formData.user_id" clearable placeholder="请输入"></el-input>
+        </el-form-item>
+
+        <el-form-item label="状态" prop="status">
+          <el-select v-model="formData.status" placeholder="请选择" clearable :style="{width: '100%'}">
+            <el-option v-for="(item, index) in statusOptions" :key="index" :label="item.label"
+                       :value="item.value" :disabled="item.disabled"></el-option>
+          </el-select>
         </el-form-item>
 
         <el-form-item label="会员昵称:">
@@ -310,6 +325,7 @@ export default {
           trigger: 'blur'
         }],
       },
+      statusOptions: [],
     };
   },
   filters: {
@@ -454,11 +470,21 @@ export default {
     openDialog() {
       this.type = "create";
       this.dialogFormVisible = true;
-    }
+    },
+    formatStatus(row) {
+      let name = "";
+      this.statusOptions.some(function (item) {
+        if (row.status === item.value) {
+          name = item.label;
+          return true;
+        }
+      });
+      return name;
+    },
   },
   async created() {
     await this.getTableData();
-
+    this.statusOptions = await this.getDict('newsStatus')
   }
 };
 </script>
